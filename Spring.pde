@@ -5,14 +5,20 @@ class Spring {
   float stiffness;
   float restLength;
   float dampingFactor;
+  float maxStress;
   boolean active;
   
   Spring(MassPoint pointA, MassPoint pointB){
     this.pointA = pointA;
     this.pointB = pointB;
     this.restLength = PVector.dist(pointA.position,pointB.position);
-    this.stiffness = springStiffness;
+    if(springStiffnessAddFluctuations){
+      this.stiffness = springStiffness * random(springStiffnessMinFluct,springStiffnessMaxFluct); 
+    } else {
+      this.stiffness = springStiffness; 
+    }   
     this.dampingFactor = springDampingFactor;
+    this.maxStress = springMaxStress;
     this.active = true;
   }
   
@@ -38,7 +44,7 @@ class Spring {
     
     float stress = abs(deltaLength()) * stiffness;
     
-    if(stress > springMaxStress){
+    if(stress > maxStress && allowMaxStress){
       deactivate();
     }
     
